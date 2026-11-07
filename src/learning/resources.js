@@ -21,9 +21,9 @@
     <p class="tip"><b>下一次練習</b>　選同一份水量與火力，只改變起鍋時間，比較兩次的口感。</p></article>`;
   }
   const stages = [
-    ['觀察鍋中的水', '開火後觀察水面。剛加熱時，氣泡稀少。'],
-    ['水滾，下麵', '氣泡持續冒出時下麵，然後觀察水量與麵條的變化。'],
-    ['試吃，決定起鍋', '以試吃得到的口感和訂單要求比較，再決定要繼續煮或起鍋。']
+    ["觀察鍋中的水", "開火後觀察水面。剛加熱時，氣泡稀少。"],
+    ["水滾，下麵", "氣泡持續冒出時下麵，然後觀察水量與麵條的變化。"],
+    ["試吃，決定起鍋", "以試吃得到的口感和訂單要求比較，再決定要繼續煮或起鍋。"],
   ];
   function demo(root) {
     root.innerHTML = `<section class="screen"><p class="kicker">料理示範 ／ 12 秒動畫</p><h3 data-title></h3>
@@ -35,34 +35,74 @@
     <g data-bubbles fill="none" stroke="#e7ffeb" stroke-width="1.5"></g><g data-sticks stroke="#f2c18d" stroke-width="3"><path d="m165 58 63-45m-58 47 66-40"/></g>
     </svg><p data-caption></p><label>播放進度 <span data-time></span><input class="slider" type="range" min="0" max="12" step=".1" value="0"></label>
     <div class="line"><button type="button" class="main" data-play>播放示範</button><button type="button" data-restart>從頭播放</button></div></section>`;
-    const get = name => root.querySelector('[data-'+name+']');
-    const slider = root.querySelector('input'), play = get('play');
-    const bubbles = Array.from({length:13}, (_,i) => {
-      const e=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      e.setAttribute('cx',116+(i*23)%87); get('bubbles').append(e);return e;
+    const get = (name) => root.querySelector("[data-" + name + "]");
+    const slider = root.querySelector("input"),
+      play = get("play");
+    const bubbles = Array.from({ length: 13 }, (_, i) => {
+      const e = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      e.setAttribute("cx", 116 + ((i * 23) % 87));
+      get("bubbles").append(e);
+      return e;
     });
-    let time=0, running=false, previous=0, frame=0;
+    let time = 0,
+      running = false,
+      previous = 0,
+      frame = 0;
     function render() {
-      const stage=Math.min(2,Math.floor(time/4));
-      get('title').textContent=stages[stage][0];get('caption').textContent=stages[stage][1];
-      get('time').textContent=Math.floor(time)+' / 12 秒';slider.value=time;
-      get('noodles').style.opacity=stage>0?'1':'0';get('sticks').style.opacity=stage>0?'1':'0';
-      if(stage===1)get('sticks').setAttribute('transform','translate(0 '+Math.sin(time*2)*5+')');
-      bubbles.forEach((b,i)=>{
-        const cycle=(time*(stage===0?.45:1.3)+i*.19)%1;
-        b.setAttribute('cy',64-cycle*17);b.setAttribute('r',1+cycle*2.5);
-        b.style.opacity=i>2&&stage===0?'0':String(1-cycle);
+      const stage = Math.min(2, Math.floor(time / 4));
+      get("title").textContent = stages[stage][0];
+      get("caption").textContent = stages[stage][1];
+      get("time").textContent = Math.floor(time) + " / 12 秒";
+      slider.value = time;
+      get("noodles").style.opacity = stage > 0 ? "1" : "0";
+      get("sticks").style.opacity = stage > 0 ? "1" : "0";
+      if (stage === 1)
+        get("sticks").setAttribute(
+          "transform",
+          "translate(0 " + Math.sin(time * 2) * 5 + ")",
+        );
+      bubbles.forEach((b, i) => {
+        const cycle = (time * (stage === 0 ? 0.45 : 1.3) + i * 0.19) % 1;
+        b.setAttribute("cy", 64 - cycle * 17);
+        b.setAttribute("r", 1 + cycle * 2.5);
+        b.style.opacity = i > 2 && stage === 0 ? "0" : String(1 - cycle);
       });
-      play.textContent=running?'暫停':time>=12?'重播示範':'播放示範';
+      play.textContent = running ? "暫停" : time >= 12 ? "重播示範" : "播放示範";
     }
     function tick(now) {
-      if(!running||!root.isConnected||!root.contains(play))return;
-      time=clamp(time+(now-previous)/1000,0,12);previous=now;
-      if(time>=12)running=false;render();if(running)frame=requestAnimationFrame(tick);
+      if (!running || !root.isConnected || !root.contains(play)) return;
+      time = clamp(time + (now - previous) / 1000, 0, 12);
+      previous = now;
+      if (time >= 12) running = false;
+      render();
+      if (running) frame = requestAnimationFrame(tick);
     }
-    function start(){cancelAnimationFrame(frame);previous=performance.now();running=true;render();frame=requestAnimationFrame(tick)}
-    play.onclick=()=>{if(running){running=false;cancelAnimationFrame(frame);render()}else{if(time>=12)time=0;start()}};
-    get('restart').onclick=()=>{time=0;start()};slider.oninput=()=>{time=Number(slider.value);previous=performance.now();render()};
+    function start() {
+      cancelAnimationFrame(frame);
+      previous = performance.now();
+      running = true;
+      render();
+      frame = requestAnimationFrame(tick);
+    }
+    play.onclick = () => {
+      if (running) {
+        running = false;
+        cancelAnimationFrame(frame);
+        render();
+      } else {
+        if (time >= 12) time = 0;
+        start();
+      }
+    };
+    get("restart").onclick = () => {
+      time = 0;
+      start();
+    };
+    slider.oninput = () => {
+      time = Number(slider.value);
+      previous = performance.now();
+      render();
+    };
     render();
   }
   function simulator(root) {
@@ -77,40 +117,84 @@
     </div><button class="main" type="button">執行試驗</button><p role="status"></p>
     <div style="overflow-x:auto"><table hidden><thead><tr><th>條件</th><th>時間／下麵</th><th>溫度／剩水</th><th>口感／燃料費</th></tr></thead><tbody></tbody></table></div>
     <p>保留最近五次比較。時間為遊戲加速時間。</p></section>`;
-    const body = root.querySelector('tbody');
-    root.querySelector('button').onclick = () => {
+    const body = root.querySelector("tbody");
+    root.querySelector("button").onclick = () => {
       if (!Game.canLearn()) return;
-      const value = name => root.querySelector('[name='+name+']').value;
-      const water = Number(value('water')), heat = Number(value('heat'));
-      const seconds = Number(value('time')), start = value('start');
-      const pot = {water, temp: start === 'cold' ? 24 : 100, heat, noodle: false, done: 0};
+      const value = (name) => root.querySelector("[name=" + name + "]").value;
+      const water = Number(value("water")),
+        heat = Number(value("heat"));
+      const seconds = Number(value("time")),
+        start = value("start");
+      const pot = {
+        water,
+        temp: start === "cold" ? 24 : 100,
+        heat,
+        noodle: false,
+        done: 0,
+      };
       let noodleAt = null;
-      if (start === 'boiling') { addNoodles(pot); noodleAt = 0; }
+      if (start === "boiling") {
+        addNoodles(pot);
+        noodleAt = 0;
+      }
       for (let elapsed = 0; elapsed < seconds; elapsed += 0.25) {
         cookStep(pot, 0.25);
-        if (!pot.noodle && pot.temp >= 100) { addNoodles(pot); noodleAt = elapsed + 0.25; }
+        if (!pot.noodle && pot.temp >= 100) {
+          addNoodles(pot);
+          noodleAt = elapsed + 0.25;
+        }
       }
-      const texture = pot.water <= 0 ? '燒乾' : !pot.noodle ? '尚未下麵' : pot.done < 4 ? '生硬' : pot.done < 7 ? '偏硬' : pot.done < 9.5 ? '適中' : pot.done < 12 ? '偏軟' : '過軟';
-      const row = document.createElement('tr');
+      const texture =
+        pot.water <= 0
+          ? "燒乾"
+          : !pot.noodle
+            ? "尚未下麵"
+            : pot.done < 4
+              ? "生硬"
+              : pot.done < 7
+                ? "偏硬"
+                : pot.done < 9.5
+                  ? "適中"
+                  : pot.done < 12
+                    ? "偏軟"
+                    : "過軟";
+      const row = document.createElement("tr");
       const cells = [
-        (start === 'cold' ? '冷水' : '沸水') + '／' + water + 'mL／' + ['關火','小火','中火','大火'][heat],
-        seconds + '秒／' + (noodleAt === null ? '未下麵' : noodleAt.toFixed(1) + '秒下麵'),
-        pot.temp.toFixed(1) + '°C／' + Math.round(pot.water) + 'mL',
-        texture + '／＄' + pot.fuel.toFixed(2)
+        (start === "cold" ? "冷水" : "沸水") +
+          "／" +
+          water +
+          "mL／" +
+          ["關火", "小火", "中火", "大火"][heat],
+        seconds +
+          "秒／" +
+          (noodleAt === null ? "未下麵" : noodleAt.toFixed(1) + "秒下麵"),
+        pot.temp.toFixed(1) + "°C／" + Math.round(pot.water) + "mL",
+        texture + "／＄" + pot.fuel.toFixed(2),
       ];
-      cells.forEach(value => { const cell = document.createElement('td'); cell.textContent = value; row.append(cell); });
+      cells.forEach((value) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        row.append(cell);
+      });
       body.prepend(row);
       while (body.children.length > 5) body.lastChild.remove();
-      root.querySelector('table').hidden = false;
-      root.querySelector('[role=status]').textContent = '試驗完成。' + texture + '，預估燃料費 ＄' + pot.fuel.toFixed(2) + '（本次不扣款）。';
-      if (pot.noodle) Game.recordExperiment({start, water, heat, seconds}, texture);
+      root.querySelector("table").hidden = false;
+      root.querySelector("[role=status]").textContent =
+        "試驗完成。" +
+        texture +
+        "，預估燃料費 ＄" +
+        pot.fuel.toFixed(2) +
+        "（本次不扣款）。";
+      if (pot.noodle) Game.recordExperiment({ start, water, heat, seconds }, texture);
     };
   }
 
-  window.showLesson=function(kind,container){
-    const area=document.createElement('div');area.className='learn';
-    const style=document.createElement('style');style.textContent=styles;
-    container.replaceChildren(style,area);
-    ({book,video:demo,sim:simulator}[kind]||book)(area);
+  window.showLesson = function (kind, container) {
+    const area = document.createElement("div");
+    area.className = "learn";
+    const style = document.createElement("style");
+    style.textContent = styles;
+    container.replaceChildren(style, area);
+    (({ book, video: demo, sim: simulator })[kind] || book)(area);
   };
 })();
