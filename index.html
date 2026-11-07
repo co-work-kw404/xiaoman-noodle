@@ -1,0 +1,8 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#263e34"><title>小滿麵屋｜餐廳經營遊戲</title><link rel="stylesheet" href="style.css?v=5"><body>
+<header><div class="wrap mast"><div class="brand"><span class="seal">麵</span><span>小滿麵屋</span></div><button id="help" class="quiet">遊戲指南 <b>?</b></button></div></header>
+<main class="wrap"><div class="title"><div><span id="phase" class="phase"></span><h1>我的料理小店</h1></div><div class="ledger"><div><small>店內資金</small><strong><i>＄</i><span id="money"></span></strong></div><div><small>營業日</small><strong id="day"></strong></div></div></div>
+<div class="layout"><section class="mapcard"><div class="cardbar"><h2>店內探索</h2><span>點選設施移動</span></div><canvas id="scene" aria-label="餐廳地圖，可用方向鍵移動、Enter 操作；也可用下方設施按鈕"></canvas><nav id="stations" aria-label="店內設施"></nav></section>
+<aside><section class="ticket"><div class="tickettop"><h2>營業手帳</h2><span id="stamp">小滿</span></div><div id="shift"></div><div id="actions"></div></section><section class="path"><h2>學習路徑</h2><p id="path"></p><button id="achievements" class="action">成就收藏</button><button id="journal" class="textbtn">查看學習圖鑑 ↗</button></section></aside></div>
+<div class="status" role="status"><span>店內消息</span><div id="feedback">歡迎來到小滿麵屋。先逛逛廚房，再決定何時掛牌營業。</div></div></main>
+<div id="achievementToast" role="status" hidden></div><dialog id="modal"><div class="dhead"><h2 id="modalTitle"></h2><button id="dismiss" aria-label="關閉">×</button></div><div id="body"></div></dialog>
+<script src="game.js?v=5"></script><script src="scene.js?v=5"></script><script src="lessons.js?v=5"></script><script src="kitchen.js?v=5"></script><script src="app.js?v=5"></script></body></html>
